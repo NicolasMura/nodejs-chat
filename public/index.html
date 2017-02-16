@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-12">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super Chat en temps réel !</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="custom.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    
+    <div class="row logged-out main-container">
+    <!-- <div class="row main-container"> -->
+      <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+
+        <section id="chat">
+        <!-- <section id="chat"> -->
+          <ul id="messages-list" class="list-group">
+            <!-- <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Somebody else</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-sm-10">
+                      <p class="message somebody-else">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Me</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-xs-offset-2">
+                      <p class="message me">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Me</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-xs-offset-2">
+                      <p class="message me">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Me</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-xs-offset-2">
+                      <p class="message me">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Me</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-xs-offset-2">
+                      <p class="message me">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="default-avatar.png" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Somebody else</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-sm-10">
+                      <p class="message somebody-else">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item message-item">
+              <div class="row">
+                <div class="col-xs-2 col-sm-1 text-center">
+                  <a href="#"><img class="circular" src="charlouze.jpg" width="40"></a>
+                </div>
+                <div class="col-xs-10 col-sm-11">
+                  <span><strong>Me</strong></span>
+                  <div class="row">
+                    <div class="col-xs-10 col-xs-offset-2">
+                      <p class="message me">Message</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li> -->
+            <!-- <li class="list-group-item message-item message-info text-center">
+              <strong><i>Nikouz, vous avez rejoint le chat !</i></strong>
+            </li>
+            <li class="list-group-item message-item message-info text-center">
+              <strong><i>July a rejoint le chat !</i></strong>
+            </li> -->
+          </ul>
+
+          <form action="" role="form">
+            <div class="input-group">
+              <input type="text" name="newMessage" id="newMessage" class="form-control" placeholder="Ecrivez un message..." autocomplete="off" required>
+              <span class="input-group-btn">
+                <button id="submit" class="btn btn-primary" type="submit">Envoyer</button>
+              </span>
+            </div>
+          </form>
+        </section>
+
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 users">
+        <section id="users">
+          <ul id="users-list" class="list-group">
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="charlouze.jpg" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <!-- <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li>
+            <li class="list-group-item user-item">
+              <div>
+                <a href="#"><img class="circular" src="default-avatar.png" width="25"></a>
+                <span>Username</span>
+                <span class="typing">typing...</span>
+              </div>
+            </li> -->
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="loginModalLabel">Login</h4>
+          </div>
+          <form id="loginForm">
+            <div class="modal-body">
+                <div class="form-group">
+                  <label for="pseudo" class="control-label">Pseudo:</label>
+                  <input type="text" class="form-control" id="pseudo" class="form-control" placeholder="Votre pseudo" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary" id="loginButton">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="bootstrap.min.js"></script>
+    <!-- socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Communication avec le serveur -->
+    <script src="client.js"></script>
+
+  </body>
+</html>
