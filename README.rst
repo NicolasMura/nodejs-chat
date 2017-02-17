@@ -1,7 +1,11 @@
-# nodejs-chat
 **************************
 A simple chat with Node.js
 **************************
+
+Requirements
+============
+
+It's a simple chat built with Node.js, just for training.
 
 Requirements
 ============
@@ -23,14 +27,15 @@ Setup
     npm install
     node app.js
 
-Then, open your favorite browser and one (or more) tab(s) at http://localhost:8080/.
+Then, open your favorite browser with one (or more) tab(s) at http://localhost:8080/.
 
 That's it!
 
 Wish list
 =========
 
-When I have time for it, below are some improvments that could be fun:
+When I have time for it, below are some improvements that could be crazy:
 
 * Allow users to upload their own avatar
+* Add signup/login with mdp connection
 
