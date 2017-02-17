@@ -18,6 +18,9 @@ var users = [];
 // Historique des messages
 var messages = [];
 
+// Liste des utilisateurs en train de saisir un message
+var typingUsers = [];
+
 // Quand un client se connecte
 io.on('connection', function(socket) {
   // On le note dans la console server
@@ -62,6 +65,7 @@ io.on('connection', function(socket) {
       // On renvoie l'info à l'utilisateur courant
       var serviceMessage = {
         pseudo: loggedUser.pseudo,
+        avatar: loggedUser.avatar,
         text  : loggedUser.pseudo + ', vous avez rejoint le chat !',
         type  : 'service-message'
       };
@@ -70,6 +74,7 @@ io.on('connection', function(socket) {
       // On signale aux autres clients qu'il y a un nouveau venu
       var serviceMessageBroadcast = {
         pseudo: loggedUser.pseudo,
+        avatar: loggedUser.avatar,
         text  : loggedUser.pseudo + ' a rejoint le chat !',
         type  : 'service-message'
       };
@@ -83,6 +88,7 @@ io.on('connection', function(socket) {
   // Réception d'un message utilisateur et broadcast vers tous les utilisateurs
   socket.on('new-message', function(message) {
     message.pseudo = loggedUser.pseudo; // On intègre ici le nom d'utilisateur au message
+    message.avatar = loggedUser.avatar; // On intègre ici l'avatar de l'utilisateur au message
     message.type = 'chat-message'; // On intègre ici le type de message (pour l'historique)
     console.log('New message from ' + message.pseudo + ' : ' + message.text);
   
@@ -94,6 +100,26 @@ io.on('connection', function(socket) {
     if (messages.length > 50) {
       messages.splice(0, 1);
     }
+  });
+
+  // Réception de l'événement 'start-typing'
+  socket.on('start-typing', function() {
+    // Ajout de l'utilisateur à la liste des utilisateurs en cours de saisie
+    var typingUserIndex = typingUsers.indexOf(loggedUser);
+    if (typingUserIndex === -1) {
+      typingUsers.push(loggedUser);
+    }
+    io.emit('update-typing', typingUsers);
+  });
+
+  // Réception de l'événement 'stop-typing'
+  socket.on('stop-typing', function() {
+    // Actualisation de la liste des utilisateurs en cours de saisie
+    var typingUserIndex = typingUsers.indexOf(loggedUser);
+    if (typingUserIndex !== -1) {
+      typingUsers.splice(typingUserIndex, 1);
+    }
+    io.emit('update-typing', typingUsers);
   });
 
   // Quand un client se déconnecte
@@ -117,18 +143,16 @@ io.on('connection', function(socket) {
       };
       socket.broadcast.emit('user-logout', serviceMessageBroadcast);
       
-      // // On renvoie l'info à tous les utilisateurs
-      // var serviceMessage = {
-      //   pseudo: loggedUser.pseudo,
-      //   text  : loggedUser.pseudo + ', vous avez quitté le chat !',
-      //   type  : 'service-message'
-      // };
-      // io.emit('user-logout', serviceMessage);
-      
       // On supprime l'utilisateur de la liste des utilisateurs connectés
       var userIndex = users.indexOf(loggedUser);
       if (userIndex !== -1) {
         users.splice(userIndex, 1);
+      }
+
+      // Si jamais il était en train de saisir un texte, on l'enlève de la liste
+      var typingUserIndex = typingUsers.indexOf(loggedUser);
+      if (typingUserIndex !== -1) {
+        typingUsers.splice(typingUserIndex, 1);
       }
     }
   });
@@ -136,6 +160,7 @@ io.on('connection', function(socket) {
 });
 
 PORT = 8080;
-http.listen(PORT, function() {
-  console.log('listening on *:' + PORT);
+HOST = 'localhost';
+http.listen(PORT, HOST, function() {
+  console.log('listening on ' + HOST + ':' + PORT);
 })

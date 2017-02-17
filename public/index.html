@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="utf-12">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Super Chat en temps réel !</title>
@@ -21,30 +21,31 @@
   </head>
   <body>
     
-    <div class="row logged-out main-container">
-    <!-- <div class="row main-container"> -->
-      <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+    <div class="container">
+      <div class="row logged-out main-container">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 
-        <section id="chat">
-          <ul id="messages-list" class="list-group"></ul>
+          <section id="chat">
+            <ul id="messages-list" class="list-group"></ul>
 
-          <form action="" role="form">
-            <div class="input-group">
-              <input type="text" name="newMessage" id="newMessage" class="form-control" placeholder="Ecrivez un message..." autocomplete="off" required>
-              <span class="input-group-btn">
-                <button id="submit" class="btn btn-primary" type="submit">Envoyer</button>
-              </span>
-            </div>
-          </form>
-        </section>
+            <form action="">
+              <div class="input-group input-group-lg">
+                <input type="text" name="newMessage" id="newMessage" class="form-control" placeholder="Ecrivez un message..." autocomplete="off" required>
+                <span class="input-group-btn">
+                  <button id="submit" class="btn btn-primary" type="submit">Envoyer</button>
+                </span>
+              </div>
+            </form>
+          </section>
 
-      </div>
+        </div>
 
-      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 users">
-        <section id="users">
-          <ul id="users-list" class="list-group"></ul>
-        </section>
-      </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 users">
+          <section id="users">
+            <ul id="users-list" class="list-group"></ul>
+          </section>
+        </div>
+      </div>  
     </div>
 
     <!-- Login Modal -->
@@ -58,11 +59,11 @@
             <div class="modal-body">
                 <div class="form-group">
                   <label for="pseudo" class="control-label">Pseudo:</label>
-                  <input type="text" class="form-control" id="pseudo" class="form-control" placeholder="Votre pseudo" autocomplete="off" required>
+                  <input type="text" class="form-control" id="pseudo" placeholder="Votre pseudo" autocomplete="off" required>
                 </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary" id="loginButton">Login</button>
+              <button type="submit" class="btn btn-primary" id="loginButton">Go !</button>
             </div>
           </form>
         </div>

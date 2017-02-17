@@ -9,7 +9,7 @@ var addMessage = function(message) {
     '<li class="list-group-item message-item ' + message.pseudo + '">' +
       '<div class="row">' +
         '<div class="col-xs-2 col-sm-1 text-center avatar">' +
-          '<a href="#"><img class="circular" src="charlouze.jpg" width="40"></a>' +
+          '<img class="circular" src="avatars/' + message.avatar + '" width="40">' +
         '</div>' +
         '<div class="col-xs-10 col-sm-11">' +
           '<span class="pseudo"><strong>' + message.pseudo + '</strong></span>' +
@@ -36,9 +36,9 @@ var addNewUser = function(user) {
   $('#users-list').append(
     '<li class="list-group-item user-item ' + user.pseudo + '">' +
       '<div class="new">' +
-        '<a href="#"><img class="circular" src="charlouze.jpg" width="25"></a>' +
+        '<img class="circular" src="avatars/' + user.avatar + '" width="25">' +
         '<span>' + user.pseudo + '</span>' +
-        '<span class="typing">typing...</span>' +
+        '<span class="typing"><i>typing...</i></span>' +
       '</div>' +
     '</li>'
   );
@@ -63,7 +63,6 @@ var scrollToBottom = function() {
 
 // Connexion à socket.io (pas besoin de spécifier l'URL à laquelle le client Socket.io doit se connecter, par défaut il va tenter de se connecter sur le serveur qui héberge la page cliente)
 var socket = io();
-// var socket = io.connect('http://localhost:8080', {'forceNew':true });
 
 var user = undefined;
 
@@ -80,7 +79,8 @@ $('#loginForm').on('submit', function(e) {
 
   // Objet JSON correspondant à l'utilisateur
   user = {
-    pseudo : $('#pseudo').val().trim()
+    pseudo : $('#pseudo').val().trim(),
+    avatar : 'default-avatar.png'
   }
 
   if (user.pseudo.length > 0){
@@ -158,4 +158,34 @@ socket.on('new-message', function(message) {
 socket.on('new-info', function(info) {
   addInfoMessage(info);
   scrollToBottom();
+});
+
+// Détection saisie utilisateur
+var typingTimer;
+var isTyping = false;
+
+$('#newMessage').keypress(function() {
+  clearTimeout(typingTimer);
+  if (!isTyping) {
+    socket.emit('start-typing');
+    isTyping = true;
+  }
+});
+
+$('#newMessage').keyup(function() {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(function() {
+    if (isTyping) {
+      socket.emit('stop-typing');
+      isTyping = false;
+    }
+  }, 1000);
+});
+
+// Gestion saisie des autres utilisateurs
+socket.on('update-typing', function(typingUsers) {
+  $('#users-list li div span.typing').hide();
+  for (i = 0; i < typingUsers.length; i++) {
+    $('#users-list li.' + typingUsers[i].pseudo + ' span.typing').show();
+  }
 });
