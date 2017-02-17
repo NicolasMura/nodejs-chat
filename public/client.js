@@ -53,10 +53,7 @@ var removeUser = function(pseudo) {
 
 // Scroll vers le bas de page si l'utilisateur n'est pas remonté pour lire d'anciens messages
 var scrollToBottom = function() {
-  // console.log($(window).scrollTop() + $(window).height() + 2 * $('#messages-list li').last().outerHeight());
-  // console.log($(document).height());
   if ($(window).scrollTop() + $(window).height() + 2 * $('#messages-list li').last().outerHeight() >= $(document).height()) {
-    // console.log('GO to BOTTOM !');
     $('html, body').animate({ scrollTop: $(document).height() }, 500);
   }
 }

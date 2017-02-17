@@ -60,7 +60,6 @@ io.on('connection', function(socket) {
       loggedUser = user;
       users.push(loggedUser);
       // TO DO --> utiliser ent.encode
-      // var pseudo = ent.encode(user.pseudo);
       
       // On renvoie l'info à l'utilisateur courant
       var serviceMessage = {

@@ -1,11 +1,11 @@
-**************************
-A simple chat with Node.js
-**************************
+************************************
+A simple real-time chat with Node.js
+************************************
 
 Purpose
 =======
 
-It's a simple chat built with Node.js, just for training.
+It's a simple real-time chat built with Node.js, just for training.
 
 Requirements
 ============
@@ -13,7 +13,7 @@ Requirements
 * `Node JS >= 6.0.0 <https://nodejs.org/en/>`_
 * `npm >= 3.8.6 <https://nodejs.org/en/>`_
 
-If you're on Mac OS X, you can easily install Install Node.js and npm with `Homebrew <https://brew.sh/>`_ on your machine using:
+If you're on Mac OS X, you can easily install install Node.js and npm with `Homebrew <https://brew.sh/>`_ on your machine using:
 
 .. code-block:: shell
 
@@ -36,6 +36,7 @@ Wish list
 
 When I have time for it, below are some improvements that could be crazy:
 
+* Use ent.encode to avoir JavaScript code injection
+* Write commentaries in English :) I'm so lazy
 * Allow users to upload their own avatar
 * Add signup/login with mdp connection
-
