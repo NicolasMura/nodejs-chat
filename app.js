@@ -12,6 +12,12 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+// Liste des utilisateurs connectés
+var users = [];  
+
+// Historique des messages
+var messages = [];
+
 // Quand un client se connecte
 io.on('connection', function(socket) {
   // On le note dans la console server
@@ -20,55 +26,110 @@ io.on('connection', function(socket) {
   // Utilisateur connecté à la socket
   var loggedUser;
 
+  // Emission d'un événement "user-already-logged" pour chaque utilisateur déjà connecté
+  for (var i = 0; i < users.length; i++) {
+    socket.emit('user-already-logged', users[i]);
+    console.log(users[i]);
+  }
+
+  // Emission d'un événement pour chaque message (chat only) de l'historique
+  for (var i = 0; i < messages.length; i++) {
+    if (messages[i].type === 'chat-message') {
+      socket.emit('new-message', messages[i]);
+    } else {
+      socket.emit('new-info', messages[i]);
+    }
+      
+  }
+
   // Dès qu'un nouvel utilisateur renseigne un pseudo, on l'enregistre et on informe les autres utilisateurs
-  socket.on('new-user-pseudo', function(user) {
-    console.log(user.pseudo + ' just logged in');
-    loggedUser = user;
-    // var pseudo = ent.encode(user.pseudo);
-    // On renvoie l'info à l'utilisateur courant
-    var userServiceMessage = {
-      pseudo: loggedUser.pseudo,
-      text  : loggedUser.pseudo + ', vous avez rejoint le chat !',
-      type  : 'login'
-    };
-    socket.emit('new-user', userServiceMessage)
-    // On signale aux autres clients qu'il y a un nouveau venu
-    var userServiceMessageBroadcast = {
-      pseudo: loggedUser.pseudo,
-      text  : loggedUser.pseudo + ' a rejoint le chat !',
-      type  : 'login'
-    };
-    socket.broadcast.emit('new-user-broadcast', userServiceMessageBroadcast);
+  socket.on('new-user-pseudo', function(user, callback) {
+    // On vérifie que l'utilisateur n'existe pas déjà
+    var userIndex = -1;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].pseudo === user.pseudo) {
+        userIndex = i;
+      }
+    }
+    // Si l'utilisateur est bien nouveau
+    if (user !== undefined && userIndex === -1) {
+      console.log(user.pseudo + ' just logged in');
+      loggedUser = user;
+      users.push(loggedUser);
+      // TO DO --> utiliser ent.encode
+      // var pseudo = ent.encode(user.pseudo);
+      
+      // On renvoie l'info à l'utilisateur courant
+      var serviceMessage = {
+        pseudo: loggedUser.pseudo,
+        text  : loggedUser.pseudo + ', vous avez rejoint le chat !',
+        type  : 'service-message'
+      };
+      socket.emit('user-login', serviceMessage)
+      
+      // On signale aux autres clients qu'il y a un nouveau venu
+      var serviceMessageBroadcast = {
+        pseudo: loggedUser.pseudo,
+        text  : loggedUser.pseudo + ' a rejoint le chat !',
+        type  : 'service-message'
+      };
+      socket.broadcast.emit('user-login', serviceMessageBroadcast);
+      callback(true);
+    } else {
+      callback(false);
+    }
   });
 
-  // Réception d'un message utilisateur et broadcast vers les autres utilisateurs
+  // Réception d'un message utilisateur et broadcast vers tous les utilisateurs
   socket.on('new-message', function(message) {
     message.pseudo = loggedUser.pseudo; // On intègre ici le nom d'utilisateur au message
+    message.type = 'chat-message'; // On intègre ici le type de message (pour l'historique)
     console.log('New message from ' + message.pseudo + ' : ' + message.text);
-    // On le renvoie à l'utilisateur courant
-    socket.emit('new-message', message);
-    // On le broadcaste aux autres clients
-    socket.broadcast.emit('new-message-broadcast', message);
+  
+    // Emission du signal 'new-message'
+    io.emit('new-message', message);
+
+    // Ajout à la liste des messages et purge si nécessaire
+    messages.push(message);
+    if (messages.length > 50) {
+      messages.splice(0, 1);
+    }
   });
 
   // Quand un client se déconnecte
   socket.on('disconnect', function() {
-    if(loggedUser !== undefined) {
+    if (loggedUser !== undefined) {
       console.log(loggedUser.pseudo + ' logged out!');
+      
       // On renvoie l'info à l'utilisateur courant
-      var userServiceMessage = {
+      var serviceMessage = {
         pseudo: loggedUser.pseudo,
         text  : loggedUser.pseudo + ', vous avez quitté le chat !',
-        type  : 'logout'
+        type  : 'service-message'
       };
-      socket.emit('user-logged-out', userServiceMessage);
+      socket.emit('user-logout', serviceMessage);
+      
       // On envoie l'info aux autres utilisateurs
-      var userServiceMessageBroadcast = {
+      var serviceMessageBroadcast = {
         pseudo: loggedUser.pseudo,
         text  : loggedUser.pseudo + ' a quitté le chat !',
-        type  : 'logout'
+        type  : 'service-message'
       };
-      socket.broadcast.emit('user-logged-out-broadcast', userServiceMessageBroadcast);
+      socket.broadcast.emit('user-logout', serviceMessageBroadcast);
+      
+      // // On renvoie l'info à tous les utilisateurs
+      // var serviceMessage = {
+      //   pseudo: loggedUser.pseudo,
+      //   text  : loggedUser.pseudo + ', vous avez quitté le chat !',
+      //   type  : 'service-message'
+      // };
+      // io.emit('user-logout', serviceMessage);
+      
+      // On supprime l'utilisateur de la liste des utilisateurs connectés
+      var userIndex = users.indexOf(loggedUser);
+      if (userIndex !== -1) {
+        users.splice(userIndex, 1);
+      }
     }
   });
 

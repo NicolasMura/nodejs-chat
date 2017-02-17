@@ -1,15 +1,21 @@
 var addMessage = function(message) {
+  divClass = '';
+  messageClass = 'somebody-else';
+  if (user !== undefined) {
+    divClass = user.pseudo === message.pseudo ? 'col-xs-offset-2' : '';
+    messageClass = user.pseudo === message.pseudo ? 'me' : 'somebody-else';
+  }
   $('#messages-list').append(
-    '<li class="list-group-item message-item">' +
+    '<li class="list-group-item message-item ' + message.pseudo + '">' +
       '<div class="row">' +
-        '<div class="col-xs-2 col-sm-1 text-center">' +
+        '<div class="col-xs-2 col-sm-1 text-center avatar">' +
           '<a href="#"><img class="circular" src="charlouze.jpg" width="40"></a>' +
         '</div>' +
         '<div class="col-xs-10 col-sm-11">' +
-          '<span><strong>' + message.pseudo + '</strong></span>' +
+          '<span class="pseudo"><strong>' + message.pseudo + '</strong></span>' +
           '<div class="row">' +
-            '<div class="col-xs-10 col-xs-offset-2">' +
-              '<p class="message me">' + message.text + '</p>' +
+            '<div class="col-xs-10 message-wrapper ' + divClass + '">' +
+              '<p class="message-content ' + messageClass + '">' + message.text + '</p>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -18,62 +24,37 @@ var addMessage = function(message) {
   );
 };
 
-var addMessageBroadcast = function(message) {
+var addInfoMessage = function(userServiceMessageBroadcast) {
   $('#messages-list').append(
-    '<li class="list-group-item message-item">' +
-      '<div class="row">' +
-        '<div class="col-xs-2 col-sm-1 text-center">' +
-          '<a href="#"><img class="circular" src="charlouze.jpg" width="40"></a>' +
-        '</div>' +
-        '<div class="col-xs-10 col-sm-11">' +
-          '<span><strong>' + message.pseudo + '</strong></span>' +
-          '<div class="row">' +
-            '<div class="col-xs-10">' +
-              '<p class="message somebody-else">' + message.text + '</p>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+    '<li class="list-group-item message-item message-info text-center">' +
+      '<strong><i>' + userServiceMessageBroadcast.text + '</i></strong>' +
+    '</li>'
+  );
+};
+
+var addNewUser = function(user) {
+  $('#users-list').append(
+    '<li class="list-group-item user-item ' + user.pseudo + '">' +
+      '<div class="new">' +
+        '<a href="#"><img class="circular" src="charlouze.jpg" width="25"></a>' +
+        '<span>' + user.pseudo + '</span>' +
+        '<span class="typing">typing...</span>' +
       '</div>' +
     '</li>'
   );
+  setTimeout(function() {
+    $('#users-list div.new').removeClass('new');
+  }, 1000);
 };
 
-var infoNewUser = function(userServiceMessage) {
-  $('#messages-list').append(
-    '<li class="list-group-item message-item message-info text-center">' +
-      '<strong><i>' + userServiceMessage.text + '</i></strong>' +
-    '</li>'
-  );
-};
-
-var infoNewUserBroadcast = function(userServiceMessageBroadcast) {
-  $('#messages-list').append(
-    '<li class="list-group-item message-item message-info text-center">' +
-      '<strong><i>' + userServiceMessageBroadcast.text + '</i></strong>' +
-    '</li>'
-  );
-};
-
-var infoDisconnectedUser = function(userServiceMessage) {
-  $('#messages-list').append(
-    '<li class="list-group-item message-item message-info text-center">' +
-      '<strong><i>' + userServiceMessage.text + '</i></strong>' +
-    '</li>'
-  );
-};
-
-var infoDisconnectedUserBroadcast = function(userServiceMessageBroadcast) {
-  $('#messages-list').append(
-    '<li class="list-group-item message-item message-info text-center">' +
-      '<strong><i>' + userServiceMessageBroadcast.text + '</i></strong>' +
-    '</li>'
-  );
+var removeUser = function(pseudo) {
+  $('#users-list li.' + pseudo).remove();
 };
 
 // Scroll vers le bas de page si l'utilisateur n'est pas remonté pour lire d'anciens messages
 var scrollToBottom = function() {
-  console.log($(window).scrollTop() + $(window).height() + 2 * $('#messages-list li').last().outerHeight());
-  console.log($(document).height());
+  // console.log($(window).scrollTop() + $(window).height() + 2 * $('#messages-list li').last().outerHeight());
+  // console.log($(document).height());
   if ($(window).scrollTop() + $(window).height() + 2 * $('#messages-list li').last().outerHeight() >= $(document).height()) {
     // console.log('GO to BOTTOM !');
     $('html, body').animate({ scrollTop: $(document).height() }, 500);
@@ -84,6 +65,8 @@ var scrollToBottom = function() {
 var socket = io();
 // var socket = io.connect('http://localhost:8080', {'forceNew':true });
 
+var user = undefined;
+
 $('#loginModal').modal('show');
 // scrollToBottom();
 $('#pseudo').focus();
@@ -91,24 +74,43 @@ $('#pseudo').focus();
 // Connexion d'un utilisateur
 $('#loginForm').on('submit', function(e) {
   e.preventDefault();
+  
+  // On efface les erreurs précédentes éventuelles
+  $('.error').remove();
 
   // Objet JSON correspondant à l'utilisateur
-  var user = {
+  user = {
     pseudo : $('#pseudo').val().trim()
   }
 
-  if(user.pseudo.length > 0){
-    console.log('Hello, ' + user.pseudo);
-    // On cache la modale de connexion
-    $('#loginModal').modal('hide');
+  if (user.pseudo.length > 0){
+    socket.emit('new-user-pseudo', user, function(success){
+      // On n'affiche le chat que si success vaut true
+      if (success) {
+        console.log('Hello, ' + user.pseudo);
 
-    scrollToBottom();
-    $('#chat input').focus();
+        // On cache la modale de connexion
+        $('#loginModal').modal('hide');
+        $('#chat input').focus();
+        scrollToBottom();
 
-    // On envoie le pseudo avec le signal "new-user-pseudo"
-    socket.emit('new-user-pseudo', user);
-    // On affiche le chat
-    $('.main-container').removeClass('logged-out');
+        // Si reconnexion d'un utilisateur ayant déjà des messages enregistrés,
+        // on lui réaffecte ses messages avec les classes 'col-xs-offset-2' et 'me' 
+        userMessages = $('#messages-list li.' + user.pseudo);
+        if(userMessages.length > 0) {
+          for(var i = 0; i < userMessages.length; i++) {
+            $(userMessages[i]).find('.message-wrapper').addClass('col-xs-offset-2');
+            $(userMessages[i]).find('.message-content').removeClass('somebody-else').addClass('me');
+          }
+        }
+        
+        // On affiche le chat
+        $('.main-container').removeClass('logged-out'); 
+      } else{
+        console.log('Ce pseudo existe déjà !');
+        $('#loginModal #loginForm .form-group').append('<p class="error">Désolé, ce pseudo existe déjà !</p>');
+      }
+    });
   }
 });
 
@@ -122,50 +124,38 @@ $('#chat form').on('submit', function(e) {
   };
   $('#newMessage').val('');
   if (message.text.trim().length !== 0) { // Gestion message vide
-    console.log('Message to be sent : ' + message.text);
     socket.emit('new-message', message);
   }
   $('#chat input').focus(); // Focus sur le champ du message
 });
 
-// Connexion de l'utilisateur courant
-socket.on('new-user', function(userServiceMessage) {
-  console.log('You just logged in!');
-  infoNewUser(userServiceMessage);
+// Récupération de la liste des utilisateurs déjà connectés
+socket.on('user-already-logged', function(user) {
+  addNewUser(user);
+});
+
+// Connexion d'un utilisateur
+socket.on('user-login', function(serviceMessage) {
+  addInfoMessage(serviceMessage);
+  addNewUser(serviceMessage);
   scrollToBottom();
 });
 
-// Connexion d'un nouvel utilisateur (autre utilisateur)
-socket.on('new-user-broadcast', function(userServiceMessageBroadcast) {
-  console.log(userServiceMessageBroadcast.pseudo + ' just logged in');
-  infoNewUserBroadcast(userServiceMessageBroadcast);
+// Déconnexion d'un utilisateur
+socket.on('user-logout', function(serviceMessage) {
+  addInfoMessage(serviceMessage);
+  removeUser(serviceMessage.pseudo);
   scrollToBottom();
 });
 
-// Réception d'un message (utilisateur courant)
+// Réception d'un message
 socket.on('new-message', function(message) {
-  console.log('New message successfully sent from ' + message.pseudo + ' : ' + message.text);
   addMessage(message);
   scrollToBottom();
 });
 
-// Réception d'un message broadcast (autre utilisateur)
-socket.on('new-message-broadcast', function(message) {
-  console.log('New message received from ' + message.pseudo + ' : ' + message.text);
-  addMessageBroadcast(message);
-  scrollToBottom();
-});
-
-// Déconnexion de l'utilisateur courant
-socket.on('user-logged-out', function(userServiceMessage) {
-  console.log(userServiceMessage.pseudo + ' logged out!');
-  infoDisconnectedUser(userServiceMessage);
-  scrollToBottom();
-});
-
-// Déconnexion broadcast (autre utilisateur)
-socket.on('user-logged-out-broadcast', function(userServiceMessageBroadcast) {
-  console.log(userServiceMessageBroadcast.pseudo + ' logged out!');
-  infoDisconnectedUserBroadcast(userServiceMessageBroadcast);
+// Réception d'une info service
+socket.on('new-info', function(info) {
+  addInfoMessage(info);
   scrollToBottom();
 });
