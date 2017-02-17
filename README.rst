@@ -2,8 +2,8 @@
 A simple chat with Node.js
 **************************
 
-Requirements
-============
+Purpose
+=======
 
 It's a simple chat built with Node.js, just for training.
 
