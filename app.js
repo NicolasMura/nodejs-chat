@@ -158,8 +158,9 @@ io.on('connection', function(socket) {
 
 });
 
-PORT = 8080;
-HOST = 'localhost';
+var HOST = require('os').hostname();
+console.log('You host name : ' + HOST);
+var PORT = 3000;
 http.listen(PORT, HOST, function() {
   console.log('listening on ' + HOST + ':' + PORT);
 })
