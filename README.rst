@@ -33,6 +33,8 @@ Then, note your host name, open your favorite browser with one (or more) tab(s) 
 
 That's it!
 
+You can see a demo living `here <http://vps121400.ovh.net:3000/>`_.
+
 Wish list
 =========
 
