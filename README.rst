@@ -29,7 +29,7 @@ Setup
   npm install
   node app.js
 
-Then, note your host name and open your favorite browser with one (or more) tab(s) at http://<YOUR_HOST_NAME>:3000/.
+Then, note your host name, open your favorite browser with one (or more) tab(s) and use following URL: ``<YOUR_HOST_NAME>:3000``.
 
 That's it!
 
