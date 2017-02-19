@@ -41,8 +41,9 @@ Wish list
 When I have time for it, below are some improvements that could be crazy:
 
 * Use ent.encode to avoir JavaScript code injection
+* Add a sound notification when a user receive a message
 * Write commentaries in English :) I'm so lazy
 * Allow users to upload their own avatar
 * Allow users to send images
 * Add signup/login with mdp connection
-* Store messages in a database
+* Store messages in a database (Redis ?)
